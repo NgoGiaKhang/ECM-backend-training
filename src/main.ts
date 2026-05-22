@@ -1,17 +1,23 @@
 import express from "express";
 import dotenv from "dotenv";
+import "./env.js";
+import { exceptionMiddleware } from "./common/exception/exception.middleware.js";
+import { logger } from "./common/log/logger.js";
+import { loggingMiddleware } from "./common/log/logging.middleware.js";
+import { env } from "./env.js";
 dotenv.config();
-
+const PORT = env.PORT;
+const ENV = env.NODE_ENV;
 const app = express();
-
-const PORT = process.env.PORT || 3000;
-
+app.use(loggingMiddleware);
 app.get("/", (_req, res) => {
   res.json({
-    message: "Hello Express TS 6",
+    data: "hello world",
   });
 });
 
 app.listen(PORT, () => {
-  console.log("Server running on port 3000");
+  logger.info(`Server running in ${ENV} on port ${PORT}`);
 });
+
+app.use(exceptionMiddleware);
