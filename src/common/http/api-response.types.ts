@@ -6,8 +6,15 @@ export type PaginatedResponse<T> = {
   data: T[];
   pagination: {
     page: number;
-    size: number;
+    limit: number;
     total: number;
     totalPages: number;
   };
+};
+
+export type ErrorResponse = {
+  status: number;
+  message: string;
+  code: string;
+  details?: Record<string, unknown>;
 };

@@ -1,9 +1,9 @@
-import { env } from "@/env.js";
+import { env } from "@/config/env.js";
 import z from "zod";
 
 export const PageableSchema = z.object({
   page: z.coerce.number().int().min(1).default(env.DEFAULT_PAGE),
-  size: z.coerce
+  limit: z.coerce
     .number()
     .int()
     .min(1)

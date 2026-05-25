@@ -8,23 +8,27 @@ import type { Pageable } from "./pageable.js";
  */
 export class Page<T> {
   readonly items: T[];
-  readonly total: number;
+  readonly totalItems: number;
   readonly page: number;
-  readonly size: number;
+  readonly limit: number;
 
   /**
    * Creates a new Page instance.
    *
    * @param items The list of items for the current page.
-   * @param total The total number of items available in the database.
+   * @param totalItems The total number of items available in the database.
    * @param page The current page number (1-based index). Defaults to 1.
-   * @param size The number of items per page. Defaults to 10.
+   * @param limit The number of items per page. Defaults to 10.
    */
-  constructor(items: T[], total: number, page = 1, size = 10) {
+  constructor(items: T[], totalItems: number, page = 1, limit = 10) {
     this.items = items;
-    this.total = total;
+    this.totalItems = totalItems;
     this.page = page;
-    this.size = size;
+    this.limit = limit;
+  }
+
+  get totalPages() {
+    return Math.ceil(this.totalItems / this.limit);
   }
 
   // --- Transformation Methods ---
@@ -42,9 +46,9 @@ export class Page<T> {
   map<U>(callback: (item: T) => U): Page<U> {
     return new Page<U>(
       this.items.map(callback),
-      this.total,
+      this.totalItems,
       this.page,
-      this.size,
+      this.limit,
     );
   }
 
@@ -60,21 +64,8 @@ export class Page<T> {
     return new Page<T>([], 0, 1, 10);
   }
 
-  /**
-   * Creates a Page instance from an object (e.g., API response JSON).
-   * This restores the prototype chain so methods like .map() work again.
-   */
-  static from<T>(obj: Page<T>): Page<T> {
-    if (!obj) return Page.empty<T>();
-    return new Page<T>(
-      obj.items || [],
-      obj.total || 0,
-      obj.page || 1,
-      obj.size || 10,
-    );
-  }
 
   static of<T>(data: T[], total: number, pageable: Pageable) {
-    return new Page<T>(data, total, pageable.page, pageable.size);
+    return new Page<T>(data, total, pageable.page, pageable.limit);
   }
 }

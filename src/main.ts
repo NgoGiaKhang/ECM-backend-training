@@ -1,23 +1,8 @@
-import express from "express";
-import dotenv from "dotenv";
-import "./env.js";
-import { exceptionMiddleware } from "./common/exception/exception.middleware.js";
-import { logger } from "./common/log/logger.js";
-import { loggingMiddleware } from "./common/log/logging.middleware.js";
-import { env } from "./env.js";
-dotenv.config();
-const PORT = env.PORT;
-const ENV = env.NODE_ENV;
-const app = express();
-app.use(loggingMiddleware);
-app.get("/", (_req, res) => {
-  res.json({
-    data: "hello world",
-  });
-});
+import { app } from "./app.js";
+import { env } from "./config/env.js";
+import { logger } from "./core/logger/index.js";
 
-app.listen(PORT, () => {
-  logger.info(`Server running in ${ENV} on port ${PORT}`);
+// Start server
+app.listen(env.PORT, () => {
+  logger.info(`Server running in ${env.NODE_ENV} on port ${env.PORT}`);
 });
-
-app.use(exceptionMiddleware);

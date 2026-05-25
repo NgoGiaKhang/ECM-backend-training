@@ -1,26 +1,29 @@
 {
   "compilerOptions": {
     /* =========================
-       Project Structure
-    ========================= */
-    "rootDir": "./src",
-    "outDir": "./dist",
-
-    /* =========================
        Environment
     ========================= */
     "target": "ES2022",
     "lib": ["ES2022"],
-    "module": "NodeNext",
-    "moduleResolution": "NodeNext",
 
     /* =========================
-       Node / TS 6
+       Modules
     ========================= */
-    "types": ["node"],
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
+    "esModuleInterop": true,
+
+    /* =========================
+       Project Structure
+    ========================= */
+    "rootDir": "./",
+    "outDir": "./dist",
+
+    /* =========================
+       Node & Express
+    ========================= */
+    "types": ["node", "vitest/globals"],
     "resolveJsonModule": true,
-    "verbatimModuleSyntax": true,
-    "moduleDetection": "force",
 
     /* =========================
        Strict Type Safety
@@ -30,32 +33,23 @@
     "exactOptionalPropertyTypes": true,
 
     /* =========================
-       DX
+       DX & Performance
     ========================= */
     "sourceMap": true,
-    "declaration": true,
-    "declarationMap": true,
-
-    /* =========================
-       Interop
-    ========================= */
-    "isolatedModules": true,
-
-    /* =========================
-       Performance
-    ========================= */
     "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
 
     /* =========================
-       Code Quality
+       Path Alias
     ========================= */
-    "forceConsistentCasingInFileNames": true,
     "baseUrl": "./",
     "paths": {
       "@/*": ["src/*"]
     },
     "ignoreDeprecations": "6.0"
   },
-  "include": ["src/**/*"],
+  "include": ["src/**/*",
+  "test"
+],
   "exclude": ["node_modules", "dist"]
 }

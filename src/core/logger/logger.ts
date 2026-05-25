@@ -1,10 +1,9 @@
-import { env } from "@/env.js";
+import { env } from "@/config/env.js";
 import pino, { type LoggerOptions } from "pino";
 
 const loggerConfig: Record<string, LoggerOptions> = {
   development: {
     level: "debug",
-
     transport: {
       target: "pino-pretty",
       options: {
@@ -14,7 +13,6 @@ const loggerConfig: Record<string, LoggerOptions> = {
       },
     },
   },
-
   production: {
     level: "info",
   },
@@ -31,6 +29,5 @@ export const LogScope = {
   AUTH: "[AUTH]",
   DATABASE: "[DATABASE]",
 } as const;
-
 const config = loggerConfig[env.NODE_ENV] ?? loggerConfig.development;
 export const logger = pino(config);
