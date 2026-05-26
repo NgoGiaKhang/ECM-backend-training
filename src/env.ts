@@ -41,6 +41,20 @@ const envSchema = z.object({
     .default("false")
     .transform((val) => val.toLowerCase() === "true"),
 
+  /**
+   * Global API rate limit time window in milliseconds.
+   *
+   * Example:
+   * 900000 = 15 minutes
+   */
+  RATE_LIMIT_WINDOW_MS: z.coerce.number(),
+
+  /**
+   * Maximum number of requests allowed
+   * within the global rate limit window.
+   */
+  RATE_LIMIT_MAX_REQUESTS: z.coerce.number(),
+
   // Global pagination defaults
   DEFAULT_PAGE: z.coerce.number().int().min(1).default(1),
   DEFAULT_SIZE: z.coerce.number().int().min(1).default(10),

@@ -1,5 +1,5 @@
-import { BadRequestException } from "@/common/exception/common.exception.js";
-import { extractPageable } from "@/common/pagination/pagination.helper.js";
+import { BadRequestException } from "@/shared/exception/common.exception.js";
+import { extractPageable } from "@/shared/pagination/extract-pageable.js";
 import type { Request } from "express";
 
 import { describe, expect, it } from "vitest";

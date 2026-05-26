@@ -1,6 +1,6 @@
 import type { Request, Response } from "express";
 import z from "zod";
-import { ValidationException } from "@/common/exception/index.js";
+import { ValidationException } from "@/shared/exception/index.js";
 
 export function getBody<T>(req: Request, schema?: z.ZodType<T>): T {
   return validateOrThrow<T>(req.body, schema);

@@ -15,9 +15,9 @@ export function serialize<T>(value: T | Page<T>) {
         total: value.totalItems,
         totalPages: value.totalPages,
       },
-    };
+    } as PaginatedResponse<T>;
   }
   return {
     data: value,
-  };
+  }  as ApiResponse<T>;
 }

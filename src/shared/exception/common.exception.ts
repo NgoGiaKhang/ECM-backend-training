@@ -41,3 +41,8 @@ export class ValidationException extends HttpException {
     super(HttpStatus.BAD_REQUEST, "VALIDATION_ERROR", message);
   }
 }
+export class TooManyRequestsException extends HttpException {
+  constructor(message: string = "Too many requests, please try again later.") {
+    super(HttpStatus.TOO_MANY_REQUESTS, "TOO_MANY_REQUESTS",message);
+  }
+}

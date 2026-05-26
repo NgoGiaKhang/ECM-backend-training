@@ -1,5 +1,5 @@
-import { Pageable } from "@/common/pagination/pageable.js";
-import { Sort } from "@/common/pagination/sort.js";
+import { Pageable } from "@/shared/pagination/pageable.js";
+import { Sort } from "@/shared/pagination/sort.js";
 import { describe, expect, it } from "vitest";
 
 

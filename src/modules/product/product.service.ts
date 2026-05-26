@@ -1,6 +1,6 @@
-import type { Pageable } from "@/common/pagination/pageable.js";
+import type { Pageable } from "@/shared/pagination/pageable.js";
 import type { Product } from "./types.js";
-import { Page } from "@/common/pagination/page.js";
+import { Page } from "@/shared/pagination/page.js";
 
 export interface ProductService {
   findAll(pageable: Pageable): Promise<Page<Product>>;

@@ -1,4 +1,4 @@
-import { env } from "@/config/env.js";
+import { env } from "@/env.js";
 import pino, { type LoggerOptions } from "pino";
 
 const loggerConfig: Record<string, LoggerOptions> = {

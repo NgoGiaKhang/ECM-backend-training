@@ -1,11 +1,11 @@
 import type { NextFunction, Request, Response } from "express";
-import { env } from "@/config/env.js";
+import { env } from "@/env.js";
 import { logger } from "../logger/logger.js";
 import {
   HttpException,
-} from "@/common/exception/http.exception.js";
-import type { ErrorResponse } from "@/common/http/api-response.types.js";
-import { HttpStatus } from "@/common/http/http-status.js";
+} from "@/shared/exception/http.exception.js";
+import type { ErrorResponse } from "@/shared/http/api-response.types.js";
+import { HttpStatus } from "@/shared/http/http-status.js";
 
 export const GENERIC_ERROR_RESPONSE: ErrorResponse = {
   status: HttpStatus.INTERNAL,

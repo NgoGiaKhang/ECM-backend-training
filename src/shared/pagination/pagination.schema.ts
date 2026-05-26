@@ -1,4 +1,4 @@
-import { env } from "@/config/env.js";
+import { env } from "@/env.js";
 import z from "zod";
 
 export const PageableSchema = z.object({

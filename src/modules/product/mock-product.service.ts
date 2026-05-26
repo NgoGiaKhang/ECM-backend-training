@@ -1,10 +1,10 @@
-import { Page } from "@/common/pagination/page.js";
+import { Page } from "@/shared/pagination/page.js";
 import type { ProductService } from "./product.service.js";
 import type { Product } from "./types.js";
-import type { Pageable } from "@/common/pagination/pageable.js";
+import type { Pageable } from "@/shared/pagination/pageable.js";
 import { products } from "./product.mock.js";
-import { NotFoundException } from "@/common/exception/common.exception.js";
-import { HttpException } from "@/common/exception/http.exception.js";
+import { NotFoundException } from "@/shared/exception/common.exception.js";
+import { HttpException } from "@/shared/exception/http.exception.js";
 
 export class InMemoryProductService implements ProductService {
   constructor(private readonly products: Product[]) {}

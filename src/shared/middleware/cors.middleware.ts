@@ -1,9 +1,8 @@
 import {
-  ForbiddenException,
   UnauthorizedException,
-} from "@/common/exception/common.exception.js";
-import { env } from "@/config/env.js";
-import type { CorsOptions } from "cors";
+} from "@/shared/exception/common.exception.js";
+import { env } from "@/env.js";
+import cors, { type CorsOptions } from "cors";
 
 const CORE_HEADERS = ["Content-Type", "Accept", "X-Requested-With"];
 const AUTH_HEADERS = ["Authorization", "X-API-Key"];
@@ -23,9 +22,7 @@ export const corsOptions: CorsOptions = {
       callback(null, true);
     } else {
       callback(
-        new UnauthorizedException(
-          `[CORS Blocked]: Target client origin unauthorized: ${origin}`,
-        ),
+        new UnauthorizedException(`[CORS Blocked]: Target client origin unauthorized: ${origin}`,),
       );
     }
   },
@@ -40,3 +37,5 @@ export const corsOptions: CorsOptions = {
   ],
   optionsSuccessStatus: 200,
 };
+
+export const apiCors = cors(corsOptions);

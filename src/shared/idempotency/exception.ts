@@ -1,5 +1,5 @@
-import { HttpException } from "@/common/exception/index.js";
-import { HttpStatus } from "@/common/http/http-status.js";
+import { HttpException } from "@/shared/exception/index.js";
+import { HttpStatus } from "@/shared/http/http-status.js";
 
 export class IdempotencyInProgressException extends HttpException {
   constructor(

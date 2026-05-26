@@ -1,4 +1,4 @@
-import { Page, Pageable } from "@/common/pagination/index.js";
+import { Page, Pageable } from "@/shared/pagination/index.js";
 import { describe, expect, it } from "vitest";
 
 

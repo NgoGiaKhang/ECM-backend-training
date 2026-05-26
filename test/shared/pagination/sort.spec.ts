@@ -1,4 +1,4 @@
-import { Sort } from "@/common/pagination/sort.js";
+import { Sort } from "@/shared/pagination/sort.js";
 
 
 interface User {
