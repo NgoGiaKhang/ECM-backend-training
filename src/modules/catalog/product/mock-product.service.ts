@@ -2,25 +2,52 @@ import { Page } from "@/shared/pagination/page.js";
 import type { ProductService } from "./product.service.js";
 import type { Product } from "./types.js";
 import type { Pageable } from "@/shared/pagination/pageable.js";
-import { products } from "./product.mock.js";
 import { NotFoundException } from "@/shared/exception/common.exception.js";
 import { ProductRequest } from "./product.schema.js";
+import { randomUUID } from "crypto";
 
 export class InMemoryProductService implements ProductService {
   constructor(private products: Product[]) {}
   async create(input: ProductRequest): Promise<Product> {
+    const now = new Date().toISOString();
+
     const newProduct: Product = {
-      ...input,
-      id: Math.random().toString(36).substring(2, 11),
-      rating: 0,
-      stock: 0,
-      sold: 0,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-      reviewCount: 0,
+      id: randomUUID(),
+
+      sku: input.sku,
+      name: input.name,
+      slug: input.slug,
+
+      description: input.description,
+
+      originalPrice: input.originalPrice ?? 0,
+      price: input.price,
+
+      discountPercent: input.discountPercent,
+
+      currency: input.currency,
+
+      stock: input.stock,
+      sold: input.sold,
+
+      isAvailable: input.isAvailable,
+
+      rating: input.rating,
+      reviewCount: input.reviewCount,
+
+      categoryId: input.categoryId,
+      brandName: "", // chưa resolve brand từ DB
+      brandId: input.brandId,
+      thumbnail: input.thumbnail,
+
+      tags: input.tags,
+
+      createdAt: now,
+      updatedAt: now,
     };
 
-    products.push(newProduct);
+    this.products.push(newProduct);
+
     return newProduct;
   }
 

@@ -1,0 +1,6 @@
+model TestUser {
+    id    String @id @default(ulid())
+    email String @unique
+    name  String
+    @@schema("test")
+}

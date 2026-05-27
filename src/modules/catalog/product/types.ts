@@ -15,11 +15,10 @@ export type Product = {
   reviewCount?: number;
   categoryId?: string | undefined;
   categoryName?: string | undefined;
+  brandId: string;
   brandName: string;
   thumbnail: string;
   tags?: string[];
   createdAt?: string;
   updatedAt?: string;
 };
-
-

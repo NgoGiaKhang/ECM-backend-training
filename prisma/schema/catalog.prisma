@@ -1,0 +1,101 @@
+model Product {
+    id String @id @default(ulid())
+
+    /// Business identifiers
+    sku  String @unique
+    slug String @unique
+
+    /// Basic information
+    name        String
+    description String?
+
+    /// Pricing
+    originalPrice Decimal? @db.Decimal(10, 2)
+    price         Decimal  @db.Decimal(10, 2)
+    currency      String   @default("USD")
+
+    /// Discount
+    discountPercent Int?
+
+    /// Inventory
+    stock Int @default(0)
+    sold  Int @default(0)
+
+    /// Availability
+    isAvailable Boolean @default(true)
+
+    /// Rating summary
+    rating      Float @default(0)
+    reviewCount Int   @default(0)
+
+    /// Media
+    thumbnail String
+    images    String[]
+
+    /// Relations
+    categoryId String?
+    category   Category? @relation(fields: [categoryId], references: [id])
+
+    brandId String
+    brand   Brand  @relation(fields: [brandId], references: [id])
+
+    /// Tags
+    tags String[]
+
+    /// Audit fields
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@index([sku])
+    @@index([slug])
+    @@index([categoryId])
+    @@index([brandId])
+    @@index([createdAt])
+    @@schema("catalog")
+}
+
+model Category {
+    id String @id @default(ulid())
+
+    name        String
+    slug        String  @unique
+    description String?
+
+    /// Self relation for category tree
+    parentId String?
+    parent   Category?  @relation("CategoryTree", fields: [parentId], references: [id])
+    children Category[] @relation("CategoryTree")
+
+    /// Relations
+    products Product[]
+
+    /// Audit fields
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@index([slug])
+    @@index([parentId])
+    @@index([name])
+    @@schema("catalog")
+}
+
+model Brand {
+    id String @id @default(ulid())
+
+    name        String
+    slug        String  @unique
+    description String?
+
+    logo String?
+
+    /// Relations
+    products Product[]
+
+    /// Audit fields
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@index([slug])
+    @@index([name])
+    @@schema("catalog")
+}

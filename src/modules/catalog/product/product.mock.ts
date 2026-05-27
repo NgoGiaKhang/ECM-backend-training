@@ -20,6 +20,7 @@ export const products: Product[] = [
     brandName: "Apple",
     thumbnail: "https://images.unsplash.com/photo-1695048133142-1a20484d2569",
     tags: ["iphone", "apple"],
+    brandId: "apple",
   },
 
   {
@@ -41,6 +42,7 @@ export const products: Product[] = [
     brandName: "Samsung",
     thumbnail: "https://images.unsplash.com/photo-1610945265064-0e34e5519bbf",
     tags: ["samsung", "android"],
+    brandId: "samsung",
   },
 
   {
@@ -62,6 +64,7 @@ export const products: Product[] = [
     brandName: "Sony",
     thumbnail: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e",
     tags: ["sony", "headphones"],
+    brandId: "sony",
   },
   {
     id: "p_005",
@@ -82,6 +85,7 @@ export const products: Product[] = [
     brandName: "Nike",
     thumbnail: "https://images.unsplash.com/photo-1542291026-7eec264c27ff",
     tags: ["nike", "shoes"],
+    brandId: "nike",
   },
 
   {
@@ -103,6 +107,7 @@ export const products: Product[] = [
     brandName: "Adidas",
     thumbnail: "https://images.unsplash.com/photo-1543508282-6319a3e2621f",
     tags: ["adidas", "running"],
+    brandId: "adidas",
   },
 
   {
@@ -123,7 +128,8 @@ export const products: Product[] = [
     categoryName: "Camera & Drone",
     brandName: "DJI",
     thumbnail: "https://images.unsplash.com/photo-1473968512647-3e447244af8f",
-    tags: ["drone", "dji"],
+    tags: ["drone", "DJI"],
+    brandId: "dji",
   },
 
   {
@@ -145,6 +151,7 @@ export const products: Product[] = [
     brandName: "Canon",
     thumbnail: "https://images.unsplash.com/photo-1516035069371-29a1b244cc32",
     tags: ["camera", "canon"],
+    brandId: "Canon",
   },
 
   {
@@ -166,6 +173,7 @@ export const products: Product[] = [
     brandName: "Sony",
     thumbnail: "https://images.unsplash.com/photo-1606813907291-d86efa9b94db",
     tags: ["ps5", "gaming"],
+    brandId: "sony",
   },
 
   {
@@ -187,5 +195,6 @@ export const products: Product[] = [
     brandName: "Logitech",
     thumbnail: "https://images.unsplash.com/photo-1527814050087-3793815479db",
     tags: ["mouse", "logitech"],
+    brandId: "Logitech",
   },
 ];

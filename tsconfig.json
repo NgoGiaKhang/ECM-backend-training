@@ -48,6 +48,6 @@
     },
     "ignoreDeprecations": "6.0"
   },
-  "include": ["src/**/*", "test"],
+  "include": ["src/**/*", "test", "prisma.config.ts", "prisma/seeds/*", "prisma/seed.ts"],
   "exclude": ["node_modules", "dist"]
 }

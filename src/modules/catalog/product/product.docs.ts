@@ -1,8 +1,8 @@
 import { registry } from "@/shared/docs/index.js";
-import { ProductSchema } from "./product.schema.js";
+import { ProductRequestSchema } from "./product.schema.js";
 import z from "zod";
 
-registry.register("ProductRequest", ProductSchema);
+registry.register("ProductRequest", ProductRequestSchema);
 
 registry.registerPath({
   method: "post",
@@ -14,7 +14,7 @@ registry.registerPath({
     body: {
       content: {
         "application/json": {
-          schema: ProductSchema,
+          schema: ProductRequestSchema,
         },
       },
     },
@@ -114,7 +114,7 @@ registry.registerPath({
     body: {
       content: {
         "application/json": {
-          schema: ProductSchema,
+          schema: ProductRequestSchema,
         },
       },
     },

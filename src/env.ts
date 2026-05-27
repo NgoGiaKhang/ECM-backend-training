@@ -55,6 +55,67 @@ const envSchema = z.object({
    */
   RATE_LIMIT_MAX_REQUESTS: z.coerce.number().default(100),
 
+  /**
+   * Validates supported database connection strings for Prisma.
+   *
+   * Supported protocols:
+   * - postgresql://
+   * - postgres://
+   * - mysql://
+   * - sqlserver://
+   * - mongodb://
+   * - file:
+   */
+  DATABASE_URL: z.string().refine(
+    (value) => {
+      try {
+        const url = new URL(value);
+
+        return [
+          "postgresql:",
+          "postgres:",
+          "mysql:",
+          "sqlserver:",
+          "mongodb:",
+          "file:",
+        ].includes(url.protocol);
+      } catch {
+        return false;
+      }
+    },
+    {
+      message: "Invalid database connection string",
+    },
+  ),
+
+  /**
+   * Maximum PostgreSQL connections in the pool.
+   */
+  DATABASE_POOL_MAX: z.coerce.number().int().positive().default(20),
+
+  /**
+   * Idle client timeout in milliseconds.
+   */
+  DATABASE_POOL_IDLE_TIMEOUT_MS: z.coerce
+    .number()
+    .int()
+    .positive()
+    .default(30_000),
+
+  /**
+   * Connection timeout in milliseconds.
+   */
+  DATABASE_POOL_CONNECTION_TIMEOUT_MS: z.coerce
+    .number()
+    .int()
+    .positive()
+    .default(10_000),
+
+  /**
+   * Enable Prisma SQL query logging.
+   */
+  DATABASE_LOG_QUERY: z.coerce.boolean().default(false),
+
   // Global pagination defaults
   DEFAULT_PAGE: z.coerce.number().int().min(1).default(1),
   DEFAULT_SIZE: z.coerce.number().int().min(1).default(10),

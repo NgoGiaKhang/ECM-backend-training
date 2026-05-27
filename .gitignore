@@ -7,6 +7,7 @@ build/
 
 # Environment
 .env
+.env.test
 
 # IDE
 .vscode/
@@ -14,3 +15,4 @@ build/
 
 # Logs
 *.log
+src/generated
