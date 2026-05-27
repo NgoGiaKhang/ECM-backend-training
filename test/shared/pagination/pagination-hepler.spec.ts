@@ -4,8 +4,6 @@ import type { Request } from "express";
 
 import { describe, expect, it } from "vitest";
 
-
-
 describe("extractPageable", () => {
   describe("success cases", () => {
     it("should extract pageable from query", () => {
@@ -17,16 +15,13 @@ describe("extractPageable", () => {
         },
       } as Partial<Request>;
 
-      const pageable =
-        extractPageable(request as Request);
+      const pageable = extractPageable(request as Request);
 
       expect(pageable.page).toBe(2);
 
       expect(pageable.limit).toBe(25);
 
-      expect(
-        pageable.sort.toString(),
-      ).toBe("-name");
+      expect(pageable.sort.toString()).toBe("-name");
     });
 
     it("should use default pagination values", () => {
@@ -34,16 +29,13 @@ describe("extractPageable", () => {
         query: {},
       } as Partial<Request>;
 
-      const pageable =
-        extractPageable(request as Request);
+      const pageable = extractPageable(request as Request);
 
       expect(pageable.page).toBe(1);
 
       expect(pageable.limit).toBe(10);
 
-      expect(
-        pageable.sort.isUnsorted,
-      ).toBe(true);
+      expect(pageable.sort.isUnsorted).toBe(true);
     });
 
     it("should allow valid sort fields", () => {
@@ -53,15 +45,12 @@ describe("extractPageable", () => {
         },
       } as Partial<Request>;
 
-      const pageable =
-        extractPageable(request as Request, [
-          "name",
-          "createdAt",
-        ]);
+      const pageable = extractPageable(request as Request, [
+        "name",
+        "createdAt",
+      ]);
 
-      expect(
-        pageable.sort.orders,
-      ).toEqual([
+      expect(pageable.sort.orders).toEqual([
         {
           property: "name",
           direction: "desc",
@@ -80,9 +69,7 @@ describe("extractPageable", () => {
         },
       } as Partial<Request>;
 
-      expect(() =>
-        extractPageable(request as Request, []),
-      ).not.toThrow();
+      expect(() => extractPageable(request as Request, [])).not.toThrow();
     });
 
     it("should allow undefined whitelist", () => {
@@ -92,9 +79,7 @@ describe("extractPageable", () => {
         },
       } as Partial<Request>;
 
-      expect(() =>
-        extractPageable(request as Request),
-      ).not.toThrow();
+      expect(() => extractPageable(request as Request)).not.toThrow();
     });
 
     it("should support multiple sort fields", () => {
@@ -104,12 +89,9 @@ describe("extractPageable", () => {
         },
       } as Partial<Request>;
 
-      const pageable =
-        extractPageable(request as Request);
+      const pageable = extractPageable(request as Request);
 
-      expect(
-        pageable.sort.orders,
-      ).toEqual([
+      expect(pageable.sort.orders).toEqual([
         {
           property: "name",
           direction: "desc",
@@ -130,9 +112,7 @@ describe("extractPageable", () => {
         },
       } as Partial<Request>;
 
-      expect(() =>
-        extractPageable(request as Request),
-      ).toThrow(
+      expect(() => extractPageable(request as Request)).toThrow(
         BadRequestException,
       );
     });
@@ -144,9 +124,7 @@ describe("extractPageable", () => {
         },
       } as Partial<Request>;
 
-      expect(() =>
-        extractPageable(request as Request),
-      ).toThrow(
+      expect(() => extractPageable(request as Request)).toThrow(
         BadRequestException,
       );
     });
@@ -158,9 +136,7 @@ describe("extractPageable", () => {
         },
       } as Partial<Request>;
 
-      expect(() =>
-        extractPageable(request as Request),
-      ).toThrow(
+      expect(() => extractPageable(request as Request)).toThrow(
         BadRequestException,
       );
     });
@@ -172,9 +148,7 @@ describe("extractPageable", () => {
         },
       } as Partial<Request>;
 
-      expect(() =>
-        extractPageable(request as Request),
-      ).toThrow(
+      expect(() => extractPageable(request as Request)).toThrow(
         BadRequestException,
       );
     });
@@ -186,9 +160,7 @@ describe("extractPageable", () => {
         },
       } as Partial<Request>;
 
-      expect(() =>
-        extractPageable(request as Request),
-      ).toThrow(
+      expect(() => extractPageable(request as Request)).toThrow(
         BadRequestException,
       );
     });
@@ -200,9 +172,7 @@ describe("extractPageable", () => {
         },
       } as Partial<Request>;
 
-      expect(() =>
-        extractPageable(request as Request),
-      ).toThrow(
+      expect(() => extractPageable(request as Request)).toThrow(
         BadRequestException,
       );
     });
@@ -215,9 +185,7 @@ describe("extractPageable", () => {
         },
       } as Partial<Request>;
 
-      expect(() =>
-        extractPageable(request as Request),
-      ).toThrowError(
+      expect(() => extractPageable(request as Request)).toThrowError(
         /page|limit/,
       );
     });
@@ -232,13 +200,8 @@ describe("extractPageable", () => {
       } as Partial<Request>;
 
       expect(() =>
-        extractPageable(request as Request, [
-          "name",
-          "email",
-        ]),
-      ).toThrow(
-        BadRequestException,
-      );
+        extractPageable(request as Request, ["name", "email"]),
+      ).toThrow(BadRequestException);
     });
 
     it("should include allowed fields in error message", () => {
@@ -249,13 +212,8 @@ describe("extractPageable", () => {
       } as Partial<Request>;
 
       expect(() =>
-        extractPageable(request as Request, [
-          "name",
-          "email",
-        ]),
-      ).toThrowError(
-        /Allowed fields: name, email/,
-      );
+        extractPageable(request as Request, ["name", "email"]),
+      ).toThrowError(/Allowed fields: name, email/);
     });
 
     it("should include invalid sort field in error message", () => {
@@ -265,11 +223,7 @@ describe("extractPageable", () => {
         },
       } as Partial<Request>;
 
-      expect(() =>
-        extractPageable(request as Request, [
-          "name",
-        ]),
-      ).toThrowError(
+      expect(() => extractPageable(request as Request, ["name"])).toThrowError(
         /password/,
       );
     });
@@ -281,11 +235,7 @@ describe("extractPageable", () => {
         },
       } as Partial<Request>;
 
-      expect(() =>
-        extractPageable(request as Request, [
-          "name",
-        ]),
-      ).toThrow(
+      expect(() => extractPageable(request as Request, ["name"])).toThrow(
         BadRequestException,
       );
     });
@@ -298,10 +248,7 @@ describe("extractPageable", () => {
       } as Partial<Request>;
 
       expect(() =>
-        extractPageable(request as Request, [
-          "name",
-          "createdAt",
-        ]),
+        extractPageable(request as Request, ["name", "createdAt"]),
       ).not.toThrow();
     });
   });
@@ -314,12 +261,9 @@ describe("extractPageable", () => {
         },
       } as Partial<Request>;
 
-      const pageable =
-        extractPageable(request as Request);
+      const pageable = extractPageable(request as Request);
 
-      expect(
-        pageable.sort.toString(),
-      ).toBe("-name");
+      expect(pageable.sort.toString()).toBe("-name");
     });
 
     it("should handle empty sort string", () => {
@@ -329,12 +273,9 @@ describe("extractPageable", () => {
         },
       } as Partial<Request>;
 
-      const pageable =
-        extractPageable(request as Request);
+      const pageable = extractPageable(request as Request);
 
-      expect(
-        pageable.sort.isUnsorted,
-      ).toBe(true);
+      expect(pageable.sort.isUnsorted).toBe(true);
     });
 
     it("should handle undefined sort", () => {
@@ -342,12 +283,9 @@ describe("extractPageable", () => {
         query: {},
       } as Partial<Request>;
 
-      const pageable =
-        extractPageable(request as Request);
+      const pageable = extractPageable(request as Request);
 
-      expect(
-        pageable.sort.isUnsorted,
-      ).toBe(true);
+      expect(pageable.sort.isUnsorted).toBe(true);
     });
   });
 });

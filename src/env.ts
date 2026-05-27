@@ -47,13 +47,13 @@ const envSchema = z.object({
    * Example:
    * 900000 = 15 minutes
    */
-  RATE_LIMIT_WINDOW_MS: z.coerce.number(),
+  RATE_LIMIT_WINDOW_MS: z.coerce.number().default(900000),
 
   /**
    * Maximum number of requests allowed
    * within the global rate limit window.
    */
-  RATE_LIMIT_MAX_REQUESTS: z.coerce.number(),
+  RATE_LIMIT_MAX_REQUESTS: z.coerce.number().default(100),
 
   // Global pagination defaults
   DEFAULT_PAGE: z.coerce.number().int().min(1).default(1),

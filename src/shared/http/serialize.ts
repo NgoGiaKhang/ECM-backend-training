@@ -19,5 +19,5 @@ export function serialize<T>(value: T | Page<T>) {
   }
   return {
     data: value,
-  }  as ApiResponse<T>;
+  } as ApiResponse<T>;
 }

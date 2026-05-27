@@ -6,7 +6,7 @@ export class IdempotencyInProgressException extends HttpException {
     message = "Request is already processing",
     code = "IDEMPOTENCY_IN_PROGRESS",
   ) {
-    super(409, message, code);
+    super(409, code, message);
   }
 }
 
@@ -15,6 +15,6 @@ export class MissingIdempotencyKeyException extends HttpException {
     message = "Missing idempotency key",
     code = "MISSING_IDEMPOTENCY_KEY",
   ) {
-    super(HttpStatus.BAD_REQUEST, message, code);
+    super(HttpStatus.BAD_REQUEST, code, message);
   }
 }

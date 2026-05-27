@@ -64,7 +64,6 @@ export class Page<T> {
     return new Page<T>([], 0, 1, 10);
   }
 
-
   static of<T>(data: T[], total: number, pageable: Pageable) {
     return new Page<T>(data, total, pageable.page, pageable.limit);
   }

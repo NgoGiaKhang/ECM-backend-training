@@ -15,12 +15,36 @@ type IdempotentCacheEntry<T = unknown> = {
   state: IdempotencyState;
 };
 /**
- * Creates an idempotency middleware.
+ * Idempotency middleware to prevent duplicate request execution.
  *
- * Prevents duplicate request processing by:
- * - locking the request using a cache key
- * - returning cached responses for completed requests
- * - rejecting concurrent duplicate requests
+ * This middleware ensures that identical requests (same fingerprint + idempotency key):
+ * - Are executed only once
+ * - Return cached response for completed requests
+ * - Reject concurrent in-progress duplicates
+ *
+ * Flow:
+ * 1. Extract idempotency key from request header
+ * 2. Build request fingerprint and hash it into a cache key
+ * 3. Try to acquire lock in cache (IN_PROGRESS state)
+ * 4. If lock exists:
+ *    - If COMPLETED → return cached response
+ *    - If IN_PROGRESS → throw IdempotencyInProgressException
+ * 5. If lock acquired:
+ *    - Intercept response body
+ *    - Attach cleanup handlers
+ *    - Continue request execution
+ *
+ * @param cache Cache implementation used for storing idempotency state
+ * @param ttlSeconds Time-to-live for idempotency cache entry (default: 60s)
+ *
+ * @throws MissingIdempotencyKeyException
+ * Thrown when request does not contain idempotency header
+ *
+ * @throws IdempotencyInProgressException
+ * Thrown when an identical request is already being processed
+ *
+ * @throws Error
+ * Any unexpected internal cache or hashing errors will be forwarded via next(err)
  */
 export function idempotency(cache: Cache, ttlSeconds = 60) {
   return async function (req: Request, res: Response, next: NextFunction) {
@@ -45,6 +69,13 @@ export function idempotency(cache: Cache, ttlSeconds = 60) {
       );
 
       if (!locked) {
+        logger.debug({
+          message: "Duplicate idempotent request detected",
+          cacheKey,
+          path: req.originalUrl,
+          method: req.method,
+        });
+
         return handleCachedRequest(cache, cacheKey, res, next);
       }
 
@@ -52,12 +83,7 @@ export function idempotency(cache: Cache, ttlSeconds = 60) {
       interceptResponse(res);
 
       // Persist or clean up the cache entry after request completion.
-      attachCleanupHandlers({
-        cache,
-        cacheKey,
-        res,
-        ttlSeconds,
-      });
+      attachCleanupHandlers({ cache, cacheKey, res, ttlSeconds });
 
       next();
     } catch (error) {
@@ -81,8 +107,17 @@ async function handleCachedRequest(
   const cached = await cache.get<IdempotentCacheEntry>(cacheKey);
 
   if (cached?.state === "COMPLETED") {
+    logger.debug({
+      message: "Returning cached idempotent response",
+      cacheKey,
+      status: cached.status,
+    });
     return res.status(cached.status).json(cached.body);
   }
+  logger.debug({
+    message: "Idempotent request already in progress",
+    cacheKey,
+  });
 
   return next(new IdempotencyInProgressException());
 }
@@ -132,6 +167,10 @@ function attachCleanupHandlers({
 
   res.on("close", () => {
     if (!res.writableEnded) {
+      logger.warn({
+        message: "Request aborted before completion",
+        cacheKey,
+      });
       void cache.delete(cacheKey);
     }
   });

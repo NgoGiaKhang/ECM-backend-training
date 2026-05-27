@@ -1,24 +1,25 @@
 export type Product = {
   id: string;
-  sku?: string;
+  sku: string;
   name: string;
-  slug?: string;
-  description?: string;
+  slug: string;
+  description?: string | undefined;
   originalPrice: number;
   price: number;
-  discountPercent?: number;
+  discountPercent?: number | undefined;
   currency?: string;
   stock?: number;
   sold?: number;
   isAvailable?: boolean;
   rating: number;
   reviewCount?: number;
-  categoryId?: string;
-  categoryName?: string;
-  brandId: string;
+  categoryId?: string | undefined;
+  categoryName?: string | undefined;
   brandName: string;
   thumbnail: string;
   tags?: string[];
   createdAt?: string;
   updatedAt?: string;
 };
+
+

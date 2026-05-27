@@ -4,10 +4,25 @@ import type { Product } from "./types.js";
 import type { Pageable } from "@/shared/pagination/pageable.js";
 import { products } from "./product.mock.js";
 import { NotFoundException } from "@/shared/exception/common.exception.js";
-import { HttpException } from "@/shared/exception/http.exception.js";
+import { ProductRequest } from "./product.schema.js";
 
 export class InMemoryProductService implements ProductService {
-  constructor(private readonly products: Product[]) {}
+  constructor(private products: Product[]) {}
+  async create(input: ProductRequest): Promise<Product> {
+    const newProduct: Product = {
+      ...input,
+      id: Math.random().toString(36).substring(2, 11),
+      rating: 0,
+      stock: 0,
+      sold: 0,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      reviewCount: 0,
+    };
+
+    products.push(newProduct);
+    return newProduct;
+  }
 
   async findAll(pageable: Pageable): Promise<Page<Product>> {
     const { page, limit: size } = pageable;
@@ -32,14 +47,31 @@ export class InMemoryProductService implements ProductService {
     return product;
   }
 
-  async delete(id: string): Promise<void> {
+  async update(id: string, input: ProductRequest): Promise<Product> {
+    const productIndex = this.products.findIndex((p) => p.id === id);
+
+    if (productIndex === -1) {
+      throw new NotFoundException(`Product with ID ${id} not found`);
+    }
+
+    const existingProduct = this.products[productIndex];
+
+    const updatedProduct: Product = {
+      ...existingProduct!,
+      ...input,
+      updatedAt: new Date().toISOString(),
+    };
+
+    this.products[productIndex] = updatedProduct;
+
+    return updatedProduct;
+  }
+  async deleteById(id: string): Promise<void> {
     const index = this.products.findIndex((p) => p.id === id);
 
     if (index === -1) {
-      throw new HttpException(404, "Not_Found", "Product not found");
+      throw new NotFoundException("Product not found");
     }
-
     this.products.splice(index, 1);
   }
 }
-

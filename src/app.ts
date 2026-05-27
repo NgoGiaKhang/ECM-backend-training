@@ -1,11 +1,15 @@
 import express from "express";
 import { env } from "@/env.js";
-import { exceptionMiddleware, NotFoundException } from "./shared/exception/index.js";
+import {
+  exceptionMiddleware,
+  NotFoundException,
+} from "./shared/exception/index.js";
 import { loggingMiddleware, logger } from "./shared/logger/index.js";
 import router from "@/router.js";
 import { apiCors, apiLimiter } from "@/shared/middleware/index.js";
 import { healthRoute } from "@/modules/health/index.js";
-
+import swaggerUi from "swagger-ui-express";
+import { openApiDocument } from "./shared/docs/index.js";
 const app = express();
 
 /* ==========================================================================
@@ -21,6 +25,8 @@ app.use(apiCors);
 // Incoming request body parsers
 app.use(express.json());
 app.use(express.urlencoded({ extended: true })); // Parses url-encoded bodies (form-data)
+
+app.use("/docs", swaggerUi.serve, swaggerUi.setup(openApiDocument));
 
 // HTTP request logging (Tracks incoming traffic)
 app.use(loggingMiddleware);

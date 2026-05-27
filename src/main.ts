@@ -1,3 +1,4 @@
+import "./bootstrap.js";
 import { app } from "./app.js";
 import { env } from "./env.js";
 import { logger } from "./shared/logger/index.js";

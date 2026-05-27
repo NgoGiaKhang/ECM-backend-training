@@ -30,4 +30,4 @@ export const HttpStatus = {
   GATEWAY_TIMEOUT: 504,
 } as const;
 
-export type HttpStatusType = typeof HttpStatus[keyof typeof HttpStatus];
+export type HttpStatusType = (typeof HttpStatus)[keyof typeof HttpStatus];

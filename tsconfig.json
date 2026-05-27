@@ -30,7 +30,7 @@
     ========================= */
     "strict": true,
     "noUncheckedIndexedAccess": true,
-    "exactOptionalPropertyTypes": true,
+    "exactOptionalPropertyTypes": false,
 
     /* =========================
        DX & Performance
@@ -48,8 +48,6 @@
     },
     "ignoreDeprecations": "6.0"
   },
-  "include": ["src/**/*",
-  "test"
-],
+  "include": ["src/**/*", "test"],
   "exclude": ["node_modules", "dist"]
 }

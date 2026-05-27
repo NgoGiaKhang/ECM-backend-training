@@ -5,7 +5,12 @@ export class HttpException extends Error {
   public readonly code: string;
   public readonly expose: boolean;
 
-  constructor(status: HttpStatusType, code: string, message: string, expose = true) {
+  constructor(
+    status: HttpStatusType,
+    code: string,
+    message: string,
+    expose = true,
+  ) {
     super(message);
     this.status = status;
     this.code = code;

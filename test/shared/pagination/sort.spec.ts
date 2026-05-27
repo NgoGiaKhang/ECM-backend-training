@@ -1,6 +1,5 @@
 import { Sort } from "@/shared/pagination/sort.js";
 
-
 interface User {
   id: number;
   name: string;
@@ -63,10 +62,7 @@ describe("Sort", () => {
 
   describe("object", () => {
     it("should convert single order to object", () => {
-      const sort = Sort.by<User>(
-        "name",
-        "asc",
-      );
+      const sort = Sort.by<User>("name", "asc");
 
       expect(sort.object).toEqual({
         name: "asc",
@@ -74,10 +70,7 @@ describe("Sort", () => {
     });
 
     it("should convert multiple orders to object", () => {
-      const sort = Sort.by<User>(
-        "name",
-        "asc",
-      ).and("age", "desc");
+      const sort = Sort.by<User>("name", "asc").and("age", "desc");
 
       expect(sort.object).toEqual({
         name: "asc",
@@ -105,10 +98,7 @@ describe("Sort", () => {
     });
 
     it("should create descending sort", () => {
-      const sort = Sort.by<User>(
-        "age",
-        "desc",
-      );
+      const sort = Sort.by<User>("age", "desc");
 
       expect(sort.orders).toEqual([
         {
@@ -121,9 +111,7 @@ describe("Sort", () => {
 
   describe("and", () => {
     it("should append new order", () => {
-      const sort = Sort.by<User>(
-        "name",
-      ).and("age", "desc");
+      const sort = Sort.by<User>("name").and("age", "desc");
 
       expect(sort.orders).toEqual([
         {
@@ -138,14 +126,9 @@ describe("Sort", () => {
     });
 
     it("should keep existing orders immutable", () => {
-      const original = Sort.by<User>(
-        "name",
-      );
+      const original = Sort.by<User>("name");
 
-      const result = original.and(
-        "age",
-        "desc",
-      );
+      const result = original.and("age", "desc");
 
       expect(original.orders).toEqual([
         {
@@ -167,9 +150,7 @@ describe("Sort", () => {
     });
 
     it("should use ascending direction by default", () => {
-      const sort = Sort.by<User>(
-        "name",
-      ).and("age");
+      const sort = Sort.by<User>("name").and("age");
 
       expect(sort.orders[1]).toEqual({
         property: "age",
@@ -180,10 +161,7 @@ describe("Sort", () => {
 
   describe("desc", () => {
     it("should convert all orders to descending", () => {
-      const sort = Sort.by<User>(
-        "name",
-        "asc",
-      ).and("age", "asc");
+      const sort = Sort.by<User>("name", "asc").and("age", "asc");
 
       const result = sort.desc();
 
@@ -200,10 +178,7 @@ describe("Sort", () => {
     });
 
     it("should keep original instance immutable", () => {
-      const original = Sort.by<User>(
-        "name",
-        "asc",
-      );
+      const original = Sort.by<User>("name", "asc");
 
       const result = original.desc();
 
@@ -233,10 +208,7 @@ describe("Sort", () => {
 
   describe("asc", () => {
     it("should convert all orders to ascending", () => {
-      const sort = Sort.by<User>(
-        "name",
-        "desc",
-      ).and("age", "desc");
+      const sort = Sort.by<User>("name", "desc").and("age", "desc");
 
       const result = sort.asc();
 
@@ -253,10 +225,7 @@ describe("Sort", () => {
     });
 
     it("should keep original instance immutable", () => {
-      const original = Sort.by<User>(
-        "name",
-        "desc",
-      );
+      const original = Sort.by<User>("name", "desc");
 
       const result = original.asc();
 
@@ -286,36 +255,21 @@ describe("Sort", () => {
 
   describe("toString", () => {
     it("should serialize ascending order", () => {
-      const sort = Sort.by<User>(
-        "name",
-        "asc",
-      );
+      const sort = Sort.by<User>("name", "asc");
 
-      expect(sort.toString()).toBe(
-        "name",
-      );
+      expect(sort.toString()).toBe("name");
     });
 
     it("should serialize descending order", () => {
-      const sort = Sort.by<User>(
-        "name",
-        "desc",
-      );
+      const sort = Sort.by<User>("name", "desc");
 
-      expect(sort.toString()).toBe(
-        "-name",
-      );
+      expect(sort.toString()).toBe("-name");
     });
 
     it("should serialize multiple orders", () => {
-      const sort = Sort.by<User>(
-        "name",
-        "desc",
-      ).and("age", "asc");
+      const sort = Sort.by<User>("name", "desc").and("age", "asc");
 
-      expect(sort.toString()).toBe(
-        "-name,age",
-      );
+      expect(sort.toString()).toBe("-name,age");
     });
 
     it("should return empty string for unsorted", () => {
@@ -332,17 +286,13 @@ describe("Sort", () => {
         },
       ]);
 
-      expect(sort.toString()).toBe(
-        "-name",
-      );
+      expect(sort.toString()).toBe("-name");
     });
   });
 
   describe("from", () => {
     it("should parse ascending property", () => {
-      const sort = Sort.from<User>(
-        "name",
-      );
+      const sort = Sort.from<User>("name");
 
       expect(sort.orders).toEqual([
         {
@@ -353,9 +303,7 @@ describe("Sort", () => {
     });
 
     it("should parse descending property", () => {
-      const sort = Sort.from<User>(
-        "-name",
-      );
+      const sort = Sort.from<User>("-name");
 
       expect(sort.orders).toEqual([
         {
@@ -366,9 +314,7 @@ describe("Sort", () => {
     });
 
     it("should parse multiple properties", () => {
-      const sort = Sort.from<User>(
-        "-name,age",
-      );
+      const sort = Sort.from<User>("-name,age");
 
       expect(sort.orders).toEqual([
         {
@@ -383,9 +329,7 @@ describe("Sort", () => {
     });
 
     it("should trim whitespace", () => {
-      const sort = Sort.from<User>(
-        "  -name , age  ",
-      );
+      const sort = Sort.from<User>("  -name , age  ");
 
       expect(sort.orders).toEqual([
         {
@@ -400,9 +344,7 @@ describe("Sort", () => {
     });
 
     it("should ignore empty tokens", () => {
-      const sort = Sort.from<User>(
-        "-name,,age,",
-      );
+      const sort = Sort.from<User>("-name,,age,");
 
       expect(sort.orders).toEqual([
         {
@@ -429,17 +371,13 @@ describe("Sort", () => {
     });
 
     it("should return unsorted for whitespace string", () => {
-      const sort = Sort.from<User>(
-        "   ",
-      );
+      const sort = Sort.from<User>("   ");
 
       expect(sort.orders).toEqual([]);
     });
 
     it("should preserve property names exactly", () => {
-      const sort = Sort.from<User>(
-        "-createdAt",
-      );
+      const sort = Sort.from<User>("-createdAt");
 
       expect(sort.orders).toEqual([
         {

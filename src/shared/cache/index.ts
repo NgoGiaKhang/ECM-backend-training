@@ -1,4 +1,4 @@
 import type { Cache } from "./cache.interface.js";
-import { NodeCache } from "./node-cache.js";
+import { InMemoryCache } from "./node-cache.js";
 
-export const cacheInstance: Cache = new NodeCache();
+export const cacheInstance: Cache = new InMemoryCache();

@@ -1,6 +1,4 @@
-import {
-  UnauthorizedException,
-} from "@/shared/exception/common.exception.js";
+import { UnauthorizedException } from "@/shared/exception/common.exception.js";
 import { env } from "@/env.js";
 import cors, { type CorsOptions } from "cors";
 
@@ -22,7 +20,9 @@ export const corsOptions: CorsOptions = {
       callback(null, true);
     } else {
       callback(
-        new UnauthorizedException(`[CORS Blocked]: Target client origin unauthorized: ${origin}`,),
+        new UnauthorizedException(
+          `[CORS Blocked]: Target client origin unauthorized: ${origin}`,
+        ),
       );
     }
   },

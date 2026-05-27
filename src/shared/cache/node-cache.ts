@@ -1,8 +1,8 @@
-import NodeCacheLib from "node-cache";
+import NodeCache from "node-cache";
 import type { Cache } from "./cache.interface.js";
 
-export class NodeCache implements Cache {
-  private cache = new NodeCacheLib();
+export class InMemoryCache implements Cache {
+  private cache = new NodeCache();
 
   async get<T>(key: string): Promise<T | null> {
     const value = this.cache.get<T>(key);

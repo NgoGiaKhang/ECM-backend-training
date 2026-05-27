@@ -1,11 +1,10 @@
 import type { NextFunction, Request, Response } from "express";
 import { env } from "@/env.js";
 import { logger } from "../logger/logger.js";
-import {
-  HttpException,
-} from "@/shared/exception/http.exception.js";
+import { HttpException } from "@/shared/exception/http.exception.js";
 import type { ErrorResponse } from "@/shared/http/api-response.types.js";
 import { HttpStatus } from "@/shared/http/http-status.js";
+import { ValidationException } from "./common.exception.js";
 
 export const GENERIC_ERROR_RESPONSE: ErrorResponse = {
   status: HttpStatus.INTERNAL,
@@ -35,6 +34,11 @@ export function exceptionMiddleware(
       code: err.code,
       message: shouldExpose ? err.message : GENERIC_ERROR_RESPONSE.message,
     };
+
+    if (err instanceof ValidationException) {
+      response.details = err.details;
+    }
+
     return res.status(err.status).json(response);
   }
 

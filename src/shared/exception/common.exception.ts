@@ -36,13 +36,13 @@ export class NotFoundException extends HttpException {
 export class ValidationException extends HttpException {
   constructor(
     message = "Validation Error",
-    public readonly details?: unknown,
+    public readonly details?: Record<string, unknown>,
   ) {
     super(HttpStatus.BAD_REQUEST, "VALIDATION_ERROR", message);
   }
 }
 export class TooManyRequestsException extends HttpException {
   constructor(message: string = "Too many requests, please try again later.") {
-    super(HttpStatus.TOO_MANY_REQUESTS, "TOO_MANY_REQUESTS",message);
+    super(HttpStatus.TOO_MANY_REQUESTS, "TOO_MANY_REQUESTS", message);
   }
 }
