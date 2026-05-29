@@ -5,15 +5,19 @@ import { cacheInstance } from "@/shared/cache/index.js";
 import { PrismaProductService } from "./prisma-product.service.js";
 import { prismaInstance } from "@/shared/database/index.js";
 
-const router: Router = Router();
+const productRouter: Router = Router();
 
 const inMemoryProductService = new PrismaProductService(prismaInstance);
 const productController = new ProductController(inMemoryProductService);
 
-router.get("/", productController.findAll);
-router.get("/:id", productController.findById);
-router.post("/", idempotency(cacheInstance, 60 * 30), productController.create);
-router.put("/:id", productController.update);
-router.delete("/:id", productController.delete);
+productRouter.get("/", productController.findAll);
+productRouter.get("/:id", productController.findById);
+productRouter.post(
+  "/",
+  idempotency(cacheInstance, 60 * 30),
+  productController.create,
+);
+productRouter.put("/:id", productController.update);
+productRouter.delete("/:id", productController.delete);
 
-export default router;
+export { productRouter };

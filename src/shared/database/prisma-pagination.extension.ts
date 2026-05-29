@@ -1,7 +1,17 @@
 import { Prisma } from "@/generated/prisma/client.js";
-import { Page, Pageable } from "../pagination/index.js";
+import { Direction, Page, Pageable, Sort } from "../pagination/index.js";
 
-type FindManyArgs<T> = Prisma.Args<T, "findMany">;
+export function toPrismaOrderBy<T>(
+  sort?: Sort<T>,
+): Array<Partial<Record<keyof T, Direction>>> | undefined {
+  if (!sort || sort.isUnsorted) {
+    return undefined;
+  }
+
+  return sort.orders.map((order) => ({
+    [order.property]: order.direction,
+  })) as Array<Partial<Record<keyof T, Direction>>>;
+}
 
 /**
  * Prisma pagination extension.
@@ -31,7 +41,7 @@ export const prismaPaginationExtension = Prisma.defineExtension({
             ...queryArgs,
             skip: pageable.skip,
             take: pageable.take,
-            orderBy: pageable.sort.object ?? (queryArgs as any).orderBy,
+            orderBy: toPrismaOrderBy(pageable.sort) ?? (queryArgs as any).orderBy,
           }),
           (context as { count: Function }).count({
             where: (queryArgs as any).where,

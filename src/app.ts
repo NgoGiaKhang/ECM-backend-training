@@ -1,7 +1,8 @@
 import express from "express";
 import { env } from "@/env.js";
 import {
-  exceptionMiddleware,
+  globalExceptionHandler,
+  malformedErrorHandler,
   NotFoundException,
 } from "./shared/exception/index.js";
 import { loggingMiddleware, logger } from "./shared/logger/index.js";
@@ -50,7 +51,8 @@ app.use((req) => {
   throw new NotFoundException(`Cannot ${req.method} ${req.originalUrl}`);
 });
 
+app.use(malformedErrorHandler)
 // Centralized global error handling interceptor (Must be the final middleware)
-app.use(exceptionMiddleware);
+app.use(globalExceptionHandler);
 
 export { app };

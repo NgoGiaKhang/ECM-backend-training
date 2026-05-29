@@ -1,17 +1,25 @@
-import { serialize } from "@/shared/http/index.js";
+import { extractQuery, serialize } from "@/shared/http/index.js";
 import type { Request, Response } from "express";
 import type { ProductService } from "./product.service.js";
 import { extractPageable } from "@/shared/pagination/index.js";
 import { extractBody, extractParam } from "@/shared/http/index.js";
 import { HttpStatus } from "@/shared/http/http-status.js";
-import { ProductRequestSchema } from "./product.schema.js";
+import { ProductFilterSchema, ProductRequestSchema } from "./product.schema.js";
+import { logger } from "@/shared/logger/logger.js";
 
 export class ProductController {
   constructor(private readonly service: ProductService) {}
 
   findAll = async (req: Request, res: Response) => {
-    const pageable = extractPageable(req, ["name", "id", "sold"]);
-    const products = await this.service.findAll(pageable);
+    const pageable = extractPageable(req, [
+      "name",
+      "sold",
+      "createdAt",
+      "price",
+    ]);
+    const filter = extractQuery(req, ProductFilterSchema);
+    logger.debug(filter)
+    const products = await this.service.findAll(pageable, filter);
     return res.json(serialize(products));
   };
 

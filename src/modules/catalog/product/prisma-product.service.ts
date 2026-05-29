@@ -1,5 +1,5 @@
 import { PrismaService } from "@/shared/database/index.js";
-import { ProductRequest } from "./product.schema.js";
+import { ProductFilterRequest, ProductRequest } from "./product.schema.js";
 import {
   BadRequestException,
   NotFoundException,
@@ -9,6 +9,7 @@ import { Product } from "@/modules/catalog/product/types.js";
 import { ProductService } from "./product.service.js";
 import { Page } from "@/shared/pagination/page.js";
 import { Pageable } from "@/shared/pagination/pageable.js";
+import { logger } from "@/shared/logger/logger.js";
 
 export type ProductWithRelations = Prisma.ProductGetPayload<{
   include: {
@@ -19,28 +20,100 @@ export type ProductWithRelations = Prisma.ProductGetPayload<{
 
 export class PrismaProductService implements ProductService {
   constructor(private readonly prisma: PrismaService) {}
-  async findAll(pageable: Pageable): Promise<Page<Product>> {
+  async findAll(
+    pageable: Pageable,
+    filter?: ProductFilterRequest,
+  ): Promise<Page<Product>> {
+    const where = this.buildProductWhere(filter);
+
     const page = await this.prisma.product.paginate({
       pageable: pageable,
       include: {
         category: true,
         brand: true,
       },
+      where,
     });
-    page.items;
 
     return page.map((i) => this.mapProduct(i));
   }
-  deleteById(id: string): Promise<void> {
-    throw new Error("Method not implemented.");
+
+  private buildProductWhere(
+    filter?: ProductFilterRequest,
+  ): Prisma.ProductWhereInput {
+    const where: Prisma.ProductWhereInput = {
+      deletedAt: null,
+    };
+
+    // SEARCH
+    if (filter?.query) {
+      where.OR = [
+        {
+          name: {
+            contains: filter.query,
+            mode: "insensitive",
+          },
+        },
+        {
+          sku: {
+            contains: filter.query,
+            mode: "insensitive",
+          },
+        },
+        {
+          slug: {
+            contains: filter.query,
+            mode: "insensitive",
+          },
+        },
+      ];
+    }
+
+    // CATEGORY
+    if (filter?.categoryId) {
+      where.categoryId = filter.categoryId;
+    }
+
+    // PRICE RANGE
+    const priceWhere: Prisma.ProductWhereInput["price"] = {};
+
+    if (filter?.minPrice) {
+      priceWhere.gte = filter.minPrice;
+    }
+
+    if (filter?.maxPrice) {
+      priceWhere.lte = filter.maxPrice;
+    }
+
+    if (Object.keys(priceWhere).length > 0) {
+      where.price = priceWhere;
+    }
+
+    logger.debug(where);
+
+    return where;
   }
 
+  async deleteById(id: string): Promise<void> {
+    const product = await this.prisma.product.exists({ id, deletedAt: null });
+
+    if (!product) {
+      throw new NotFoundException("Product not found");
+    }
+
+    await this.prisma.product.update({
+      data: {
+        deletedAt: new Date(),
+      },
+      where: { id },
+    });
+  }
   /**
    * Find product by id
    */
   async findById(id: string) {
     const res = await this.prisma.product.findUnique({
-      where: { id },
+      where: { id, deletedAt: null },
       include: {
         category: true,
         brand: true,
@@ -57,7 +130,23 @@ export class PrismaProductService implements ProductService {
    */
   async create(data: ProductRequest) {
     await this.validateRequest(data);
-    const rs = await this.prisma.product.create({ 
+    const [skuExist, slugExist] = await Promise.all([
+      this.prisma.product.exists({
+        sku: data.sku,
+      }),
+      this.prisma.product.exists({
+        slug: data.slug,
+      }),
+    ]);
+
+    if (skuExist) {
+      throw new BadRequestException("SKU already used");
+    }
+
+    if (slugExist) {
+      throw new BadRequestException("Slug already used");
+    }
+    const rs = await this.prisma.product.create({
       data: {
         sku: data.sku,
         slug: data.slug,
@@ -69,13 +158,13 @@ export class PrismaProductService implements ProductService {
 
         discountPercent: data.discountPercent,
 
-        stock: data.stock,
-        sold: data.sold,
+        stock: 0,
+        sold: 0,
 
         isAvailable: data.isAvailable,
 
-        rating: data.rating,
-        reviewCount: data.reviewCount,
+        rating: 0,
+        reviewCount: 0,
 
         thumbnail: data.thumbnail,
         images: data.images,
@@ -93,12 +182,11 @@ export class PrismaProductService implements ProductService {
   }
 
   async validateRequest(data: ProductRequest) {
-    const [category, brand, product] = await Promise.all([
+    const [category, brand] = await Promise.all([
       data.categoryId
-        ? this.prisma.category.exists({ id: data.categoryId })
+        ? this.prisma.category.exists({ id: data.categoryId, deletedAt: null })
         : Promise.resolve(1),
-      this.prisma.brand.exists({ id: data.brandId }),
-      this.prisma.product.exists({ sku: data.sku }),
+      this.prisma.brand.exists({ id: data.brandId, deletedAt: null }),
     ]);
 
     if (data.categoryId && !category) {
@@ -108,21 +196,21 @@ export class PrismaProductService implements ProductService {
     if (!brand) {
       throw new NotFoundException("Brand not found");
     }
-
-    if (product) {
-      throw new BadRequestException("SKU already used");
-    }
   }
 
   /**
    * Update product
    */
-  async update(id: string, data: Partial<ProductRequest>) {
-    const exist = this.prisma.product.exists({
+  async update(id: string, data: ProductRequest) {
+    const exist = await this.prisma.product.exists({
       id,
+      deletedAt: null,
     });
 
     if (!exist) throw new NotFoundException("Product ");
+
+    await this.validateRequest(data);
+
     const res = await this.prisma.product.update({
       where: { id },
       data: {

@@ -3,7 +3,7 @@ import { z } from "zod";
 /**
  * Product validation schema.
  */
-export const ProductRequestSchema = z.object({
+export const ProductRequestSchema = z.strictObject({
   /**
    * Business identifiers
    */
@@ -74,15 +74,7 @@ export const ProductRequestSchema = z.object({
       message: "Price must be greater than 0",
     }),
 
-  currency: z
-    .string({
-      message: "Currency is required",
-    })
-    .trim()
-    .length(3, {
-      message: "Currency must be a 3-letter ISO code",
-    })
-    .default("USD"),
+  currency: z.literal("USD").default("USD"),
 
   /**
    * Discount
@@ -102,32 +94,6 @@ export const ProductRequestSchema = z.object({
     })
     .optional(),
 
-  /**
-   * Inventory
-   */
-  stock: z.coerce
-    .number({
-      message: "Stock must be a number",
-    })
-    .int({
-      message: "Stock must be an integer",
-    })
-    .min(0, {
-      message: "Stock cannot be negative",
-    })
-    .default(0),
-
-  sold: z.coerce
-    .number({
-      message: "Sold count must be a number",
-    })
-    .int({
-      message: "Sold count must be an integer",
-    })
-    .min(0, {
-      message: "Sold count cannot be negative",
-    })
-    .default(0),
 
   /**
    * Availability
@@ -141,29 +107,6 @@ export const ProductRequestSchema = z.object({
   /**
    * Rating summary
    */
-  rating: z.coerce
-    .number({
-      message: "Rating must be a number",
-    })
-    .min(0, {
-      message: "Rating cannot be less than 0",
-    })
-    .max(5, {
-      message: "Rating cannot exceed 5",
-    })
-    .default(0),
-
-  reviewCount: z.coerce
-    .number({
-      message: "Review count must be a number",
-    })
-    .int({
-      message: "Review count must be an integer",
-    })
-    .min(0, {
-      message: "Review count cannot be negative",
-    })
-    .default(0),
 
   /**
    * Media
@@ -217,3 +160,33 @@ export const ProductRequestSchema = z.object({
  * Product update validation schema.
  */
 export type ProductRequest = z.infer<typeof ProductRequestSchema>;
+
+export const ProductFilterSchema = z.object({
+  query: z
+    .string()
+    .trim()
+    .max(100, {
+      message: "Query must not exceed 100 characters",
+    })
+    .regex(/^[\p{L}\p{N}\s\-_"']*$/u, {
+      message: "Query contains invalid characters",
+    })
+    .optional(),
+
+  categoryId: z.preprocess(
+    (val) => (val === "" ? undefined : val),
+    z.ulid().optional(),
+  ),
+
+  minPrice: z.preprocess(
+    (val) => (val === "" ? undefined : Number(val)),
+    z.number().min(0).optional(),
+  ),
+
+  maxPrice: z.preprocess(
+    (val) => (val === "" ? undefined : Number(val)),
+    z.number().min(0).optional(),
+  ),
+});
+
+export type ProductFilterRequest = z.infer<typeof ProductFilterSchema>;

@@ -4,7 +4,10 @@ import { logger } from "../logger/logger.js";
 import { HttpException } from "@/shared/exception/http.exception.js";
 import type { ErrorResponse } from "@/shared/http/api-response.types.js";
 import { HttpStatus } from "@/shared/http/http-status.js";
-import { ValidationException } from "./common.exception.js";
+import {
+  BadRequestException,
+  ValidationException,
+} from "./common.exception.js";
 
 export const GENERIC_ERROR_RESPONSE: ErrorResponse = {
   status: HttpStatus.INTERNAL,
@@ -14,7 +17,7 @@ export const GENERIC_ERROR_RESPONSE: ErrorResponse = {
 
 const isProduction = env.NODE_ENV === "production";
 
-export function exceptionMiddleware(
+export function globalExceptionHandler(
   err: unknown,
   req: Request,
   res: Response,
@@ -54,9 +57,21 @@ export function exceptionMiddleware(
       status: HttpStatus.INTERNAL,
       code: "UNKNOWN_ERROR",
       message: err.message,
-      stack: err.stack,
     });
   }
   // Production mode
   return res.status(GENERIC_ERROR_RESPONSE.status).json(GENERIC_ERROR_RESPONSE);
+}
+
+export function malformedErrorHandler(
+  err: any,
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) {
+  if (err instanceof SyntaxError && "body" in err) {
+    next(new BadRequestException("Malformed JSON request body"));
+  }
+
+  next(err);
 }

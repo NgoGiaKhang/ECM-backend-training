@@ -1,4 +1,4 @@
-import { exceptionMiddleware } from "@/shared/exception/exception.middleware.js";
+import { globalExceptionHandler } from "@/shared/exception/exception.middleware.js";
 import express, { RequestHandler } from "express";
 
 export function createTestingMiddlewareApp(middleware: RequestHandler, handler: RequestHandler) {
@@ -7,7 +7,7 @@ export function createTestingMiddlewareApp(middleware: RequestHandler, handler: 
   app.use(express.json());
   app.post("/test", middleware, handler);
 
-  app.use(exceptionMiddleware);
+  app.use(globalExceptionHandler);
 
   return app;
 }

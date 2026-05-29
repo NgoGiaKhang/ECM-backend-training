@@ -27,13 +27,13 @@ export class InMemoryProductService implements ProductService {
 
       currency: input.currency,
 
-      stock: input.stock,
-      sold: input.sold,
+      stock: 0,
+      sold: 0,
 
       isAvailable: input.isAvailable,
 
-      rating: input.rating,
-      reviewCount: input.reviewCount,
+      rating: 0,
+      reviewCount: 0,
 
       categoryId: input.categoryId,
       brandName: "", // chưa resolve brand từ DB
@@ -51,7 +51,7 @@ export class InMemoryProductService implements ProductService {
     return newProduct;
   }
 
-  async findAll(pageable: Pageable): Promise<Page<Product>> {
+  async findAll(pageable: Pageable, ): Promise<Page<Product>> {
     const { page, limit: size } = pageable;
 
     const start = (page - 1) * size;

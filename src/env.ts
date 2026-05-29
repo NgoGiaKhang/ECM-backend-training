@@ -100,7 +100,7 @@ const envSchema = z.object({
     .number()
     .int()
     .positive()
-    .default(30_000),
+    .default(60_000),
 
   /**
    * Connection timeout in milliseconds.
