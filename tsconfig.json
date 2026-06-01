@@ -53,7 +53,7 @@
     "src/**/*",
     "test",
     "prisma.config.ts",
-    "prisma/seeds/*",
+    "prisma/seeds/**/*",
     "prisma/seed.ts"
   ],
   "exclude": ["node_modules", "dist"]

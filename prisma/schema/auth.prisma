@@ -1,0 +1,40 @@
+enum UserRole {
+    super_admin
+    admin
+    manager
+    user
+    moderator
+
+    @@schema("identity")
+}
+
+/// System-wide User Account Statuses
+enum UserStatus {
+    active // Account is in good standing and can authenticate
+    inactive // Account is temporarily disabled or pending activation
+    banned // Account is permanently blocked due to security or policy violations
+
+    @@schema("identity")
+}
+
+/// Core User entity designed for a completely stateless JWT architecture
+model User {
+    id           String @id @default(ulid())
+    email        String @unique // Unique identity identifier for login credentials
+    passwordHash String @map("password_hash") // Hashed password string (e.g., Argon2/Bcrypt)
+
+    // Profile Information
+    fullname String // User's full display name (e.g., "John Doe")
+
+    // Authorization & Lifecycle State
+    roles  UserRole[] @default([user])
+    status UserStatus @default(active) // Current state of the user account lifecycle
+
+    // Timestamps for standard auditing
+    createdAt  DateTime  @default(now()) @map("created_at")
+    updatedAt  DateTime  @updatedAt @map("updated_at")
+    verifiedAt DateTime? @updatedAt @map("verified_at")
+
+    @@map("users") // Database table naming convention forced to snake_case plural
+    @@schema("identity")
+}

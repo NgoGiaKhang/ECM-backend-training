@@ -11,6 +11,9 @@ import { apiCors, apiLimiter } from "@/shared/middleware/index.js";
 import { healthRoute } from "@/modules/health/index.js";
 import swaggerUi from "swagger-ui-express";
 import { openApiDocument } from "./shared/docs/index.js";
+import { authenticate } from "./shared/auth/index.js";
+import { authProvider } from "./modules/auth/auth.module.js";
+
 const app = express();
 
 /* ==========================================================================
@@ -39,6 +42,30 @@ app.use(loggingMiddleware);
 // Liveness/Readiness probe endpoint (Exempt from global prefix)
 app.use(healthRoute);
 
+// 2. Auth middleware (global)
+app.use(
+  authenticate(authProvider, {
+    publicRoutes: [
+      // {
+      //   path: "/api/v1/products",
+      //   methods: ["GET"],
+      // },
+      // {
+      //   path: "/api/v1/products/*",
+      //   methods: ["GET"],
+      // },
+      {
+        path: "/api/v1/auth/login",
+        methods: ["POST"],
+      },
+      {
+        path: "/api/v1/auth/register",
+        methods: ["POST"],
+      },
+    ],
+  }),
+);
+
 // Core application API routing under a global prefix (e.g., /api/v1)
 app.use(env.APP_PREFIX, router);
 
@@ -51,7 +78,7 @@ app.use((req) => {
   throw new NotFoundException(`Cannot ${req.method} ${req.originalUrl}`);
 });
 
-app.use(malformedErrorHandler)
+app.use(malformedErrorHandler);
 // Centralized global error handling interceptor (Must be the final middleware)
 app.use(globalExceptionHandler);
 

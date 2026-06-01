@@ -1,9 +1,6 @@
-import "dotenv/config";
-import dotenv from "dotenv";
-
+import { StringValue } from "ms";
 import { z } from "zod";
 // Trigger initialization of dot files before parsing values
-dotenv.config();
 
 /**
  * Structural schema layout enforcing correct data types
@@ -25,6 +22,12 @@ const envSchema = z.object({
       if (prefix.endsWith("/")) prefix = prefix.slice(0, -1);
       return prefix;
     }),
+
+  // Global pagination defaults
+  DEFAULT_PAGE: z.coerce.number().int().min(1).default(1),
+  DEFAULT_LIMIT: z.coerce.number().int().min(1).default(10),
+  MAX_SORT_FIELDS: z.coerce.number().int().min(1).default(3),
+  MAX_LIMIT: z.coerce.number().int().min(1).default(100),
 
   // Security parameters
   CORS_ALLOWED_ORIGINS: z
@@ -116,19 +119,44 @@ const envSchema = z.object({
    */
   DATABASE_LOG_QUERY: z.coerce.boolean().default(false),
 
-  // Global pagination defaults
-  DEFAULT_PAGE: z.coerce.number().int().min(1).default(1),
-  DEFAULT_LIMIT: z.coerce.number().int().min(1).default(10),
-  MAX_SORT_FIELDS: z.coerce.number().int().min(1).default(3),
-  MAX_LIMIT: z.coerce.number().int().min(1).default(100),
+  JWT_SECRET: z
+    .string()
+    .min(32, "JWT_SECRET should be at least 32 characters long"),
+
+  // Issuer must be a non-empty string (e.g., 'my-api-gateway')
+  JWT_ISSUER: z.string().min(1, "JWT_ISSUER is required"),
+
+  // Audience can be optional or required depending on your design
+  JWT_AUDIENCE: z.string().min(1, "JWT_AUDIENCE is required").optional(),
+
+  // Validate expiresIn format (e.g., '15m', '1h', '7d' or raw numbers as string)
+  JWT_EXPIRES_IN: z
+    .string()
+    .min(1, "JWT_EXPIRES_IN is required")
+    .regex(
+      /^(\d+(ms|s|m|h|d|w|y)|\d+)$/,
+      "JWT_EXPIRES_IN must be a valid vercel/ms format (e.g., '15m', '1h', '24h', '7d')",
+    )
+    .transform((v) => v as StringValue),
+  BCRYPT_SALT_ROUNDS: z.coerce
+    .number("BCRYPT_SALT_ROUNDS must be a valid number representation")
+    .int()
+    .min(4, { message: "Salt rounds below 4 are cryptographically insecure" })
+    .max(31, { message: "Salt rounds above 31 will cause heavy CPU blockages" })
+    .default(10),
 });
 
 // Run synchronous configuration parsing
 const parseResult = envSchema.safeParse(process.env);
 
 if (!parseResult.success) {
-  console.error("Invalid application configuration variables:");
-  process.exit(1); // Abort execution immediately due to critical misconfiguration
+  console.error("\n❌ Invalid application configuration variables:\n");
+
+  for (const issue of parseResult.error.issues) {
+    console.error(`- ${issue.path.join(".")} : ${issue.message}`);
+  }
+
+  process.exit(1);
 }
 
 /**
