@@ -118,8 +118,9 @@ const envSchema = z.object({
 
   // Global pagination defaults
   DEFAULT_PAGE: z.coerce.number().int().min(1).default(1),
-  DEFAULT_SIZE: z.coerce.number().int().min(1).default(10),
-  MAX_SIZE: z.coerce.number().int().min(1).default(100),
+  DEFAULT_LIMIT: z.coerce.number().int().min(1).default(10),
+  MAX_SORT_FIELDS: z.coerce.number().int().min(1).default(3),
+  MAX_LIMIT: z.coerce.number().int().min(1).default(100),
 });
 
 // Run synchronous configuration parsing

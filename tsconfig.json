@@ -46,8 +46,15 @@
     "paths": {
       "@/*": ["src/*"]
     },
-    "ignoreDeprecations": "6.0"
+
+    "ignoreDeprecations": "6.0",
   },
-  "include": ["src/**/*", "test", "prisma.config.ts", "prisma/seeds/*", "prisma/seed.ts"],
+  "include": [
+    "src/**/*",
+    "test",
+    "prisma.config.ts",
+    "prisma/seeds/*",
+    "prisma/seed.ts"
+  ],
   "exclude": ["node_modules", "dist"]
 }
