@@ -54,7 +54,7 @@
     "test",
     "prisma.config.ts",
     "prisma/seeds/**/*",
-    "prisma/seed.ts"
+    "prisma/seeds/catalog.seed.ts"
   ],
   "exclude": ["node_modules", "dist"]
 }
