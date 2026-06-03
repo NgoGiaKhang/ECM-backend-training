@@ -80,11 +80,8 @@ export class AuthService {
       roles: user.roles,
       sid: crypto.randomUUID().toString(),
     };
-
     // 5. Sign and issue the final stateless access token string
     const token = await this.jwtService.sign(claims);
-    console.log(token);
-
     return {
       accessToken: token,
       user: {
