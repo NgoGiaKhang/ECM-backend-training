@@ -12,15 +12,13 @@ type AuthorizeOptions =
  */
 export const authorize = (options: AuthorizeOptions) => {
   return (req: Request, res: Response, next: NextFunction): void => {
-    const user = getAuthenticatedUser(req); // Your internal utility to retrieve req.user safely
-
+    const user = getAuthenticatedUser(req); 
     // 1. Super Admin absolute bypass (Matches your system blueprint)
     const hasSuperAdmin = user.roles.includes(ROLES.SUPER_ADMIN);
-    
+  
     if (hasSuperAdmin) {
       return next();
     }
-
     let isAuthorized = false;
     const userRoles = user.roles as RoleType[];
     // 2. Branching Logic based on configuration type
@@ -31,7 +29,6 @@ export const authorize = (options: AuthorizeOptions) => {
     } else if (options.exact) {
       isAuthorized = userRoles.some((role) => options.exact!.includes(role));
     }
-
     if (!isAuthorized) {
       throw new ForbiddenException(
         options.minimum

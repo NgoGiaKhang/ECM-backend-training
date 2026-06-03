@@ -22,12 +22,10 @@ export function authenticate(
     logger.debug("auth");
     // 2. Authenticate
     const user = await provider.authenticate(req);
-
     // 3. Not authenticated
     if (!user) {
       return next(new UnauthorizedException("You are not authenticated"));
     }
-
     // 4. Attach user to
     setAuthenticatedUser(req, user);
     next();
