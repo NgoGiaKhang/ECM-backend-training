@@ -7,8 +7,9 @@ build/
 
 # Environment
 .env.*
-.env.test
-
+.env
+# Keep example file
+!.env.example
 # IDE
 .vscode/
 .idea/

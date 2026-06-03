@@ -35,6 +35,8 @@ export class PrismaUserFacade implements UserFacade {
         email: dto.email,
         passwordHash: dto.passwordHash,
         fullname: dto.fullname,
+        //mocking then verifiedAt to bypass email verification for testing purposes
+        verifiedAt: new Date()
       },
     });
 

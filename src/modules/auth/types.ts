@@ -10,13 +10,16 @@ export interface AccessTokenClaims {
   // --- Custom Context & Authorization Claims ---
   roles: string[]; // User access roles
   sid: string; // session id
-
 }
 
-
 export type MeResponse = {
-    id: string,
-    email: string,
-    roles: ReadonlyArray<string>,
-    fullname: string,
+  id: string;
+  email: string;
+  roles: ReadonlyArray<string>;
+  fullname: string;
+};
+
+export interface LoginResponse {
+  accessToken: string;
+  user: MeResponse;
 }

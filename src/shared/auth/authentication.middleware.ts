@@ -16,16 +16,15 @@ export function authenticate(
 
   return async (req: Request, _res: Response, next: NextFunction) => {
     // 1. Skip public routes
-
+    if (isPublicRoute(req, publicRoutes)) {
+      return next();
+    }
     logger.debug("auth");
     // 2. Authenticate
     const user = await provider.authenticate(req);
 
     // 3. Not authenticated
     if (!user) {
-      if (isPublicRoute(req, publicRoutes)) {
-        return next();
-      }
       return next(new UnauthorizedException("You are not authenticated"));
     }
 

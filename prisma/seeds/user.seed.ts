@@ -4,10 +4,9 @@ import * as bcrypt from "bcrypt";
 import { ulid } from "ulid";
 
 async function main() {
-  console.log("🌱 Starting database seeding...");
+  console.log("Starting database seeding...");
 
-  await prisma.user.deleteMany({});
-  console.log("🧹 Cleaned existing users.");
+  console.log("Cleaned existing users.");
 
   const saltRounds = 10;
   const commonPasswordHash = await bcrypt.hash("Password123@", saltRounds);
@@ -67,7 +66,7 @@ main()
     await prisma.$disconnect();
   })
   .catch(async (e) => {
-    console.error("❌ Seeding failed:", e);
+    console.error("Seeding failed:", e);
     await prisma.$disconnect();
     process.exit(1);
   });

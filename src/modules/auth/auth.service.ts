@@ -1,7 +1,7 @@
 import { type UserFacade } from "@/modules/user/index.js";
 import { JwtService } from "./jwt.service.js";
 import * as bcrypt from "bcrypt";
-import { AccessTokenClaims, MeResponse } from "./types.js";
+import { AccessTokenClaims, LoginResponse, MeResponse } from "./types.js";
 import {
   BadCredentialsException,
   BannedAccountException,
@@ -16,9 +16,7 @@ import {
 import { env } from "@/env.js";
 import { AuthenticatedUser } from "@/shared/auth/auth.interface.js";
 
-export interface LoginResult {
-  accessToken: string;
-}
+
 
 export class AuthService {
   constructor(
@@ -45,7 +43,7 @@ export class AuthService {
     });
   }
 
-  public async login(email: string, passwordRaw: string): Promise<LoginResult> {
+  public async login(email: string, passwordRaw: string): Promise<LoginResponse> {
     // 1. Fetch user profile along with password hash via the clean UserFacade contract
     const user = await this.userFacade.findByEmailWithPassword(email);
 
@@ -89,6 +87,12 @@ export class AuthService {
 
     return {
       accessToken: token,
+      user: {
+        id: user.id,
+        roles: user.roles as string[],
+        fullname: user.fullname,
+        email: user.email,
+      },
     };
   }
 

@@ -46,14 +46,14 @@ app.use(healthRoute);
 app.use(
   authenticate(authProvider, {
     publicRoutes: [
-      // {
-      //   path: "/api/v1/products",
-      //   methods: ["GET"],
-      // },
-      // {
-      //   path: "/api/v1/products/*",
-      //   methods: ["GET"],
-      // },
+      {
+        path: "/api/v1/products",
+        methods: ["GET"],
+      },
+      {
+        path: "/api/v1/products/*",
+        methods: ["GET"],
+      },
       {
         path: "/api/v1/auth/login",
         methods: ["POST"],
